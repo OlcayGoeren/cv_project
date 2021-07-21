@@ -32,7 +32,8 @@ Hier die Ergebnisse:
 ![](https://github.com/OlcayGoeren/cv_project/blob/master/train_results/res1.png?raw=true)
 ![enter image description here](https://github.com/OlcayGoeren/cv_project/blob/master/train_results/res2.png?raw=true)
 ![enter image description here](https://github.com/OlcayGoeren/cv_project/blob/master/train_results/res3.png?raw=true)
-Warum meine Vorhergesehenen Bilder so verschwommen sind, kann ich mir nicht wirklich erklären. Möglicher Grund hierfür könnte die geringe Epoch Anzahl sein. 
+Warum meine Vorhergesehenen Bilder so verschwommen sind, kann ich mir nicht wirklich erklären. Möglicher Grund hierfür könnte die geringe Epoch Anzahl sein.
+Ich vermute, dass die blauen Stühle mit in die vorhergesehenen Masken aufgenommen wurden, weil in vielen Bildern die Personen mit blauem Licht angestrahlt werden.
 
 ## Fazit
 Mittels des DeepLabv3+ Models konnten Pixelgruppen zu Personen zugeordnet werden, dabei konnte eine Genauigkeit von 90% ermitteln werden. Damit das training weniger Resourcen verbraucht, würde ich bei meinem nächsten Model, mehrere Zwischenevaluierungsschritte einbauen:
