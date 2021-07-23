@@ -20,13 +20,13 @@ Ich habe mich für das Model entschieden, da es [89%  Genauigkeit im Pascal-Voc-
 - Loss Function = Dice
 - Optimizer = Adam
 - training batch_size = 15
-- valid batch_size = 4
+- batch_size = 4
 - epoch = 8
 - input image_size = 512 x 384
 
 
 ## Training
-Beim Training habe ich auf **transfer learning** gesetzt. Dabei habe ich die Variante benutzt, wo das **gesamte Model** von 0 auf trainiert wird.
+Beim Training habe ich auf **transfer learning** gesetzt. Dabei habe ich die Variante benutzt, wo das gesamte Model von 0 auf trainiert wird.
 Das Training hat insgesamt 6:30 Stunden gedauert und hat meinen Rechner an seine Grenzen gebracht. Durch das Training konnte eine **Genauigkeit von 90%** erzielt werden. 
 Hier die Ergebnisse: 
 ![](https://github.com/OlcayGoeren/cv_project/blob/master/train_results/res1.png?raw=true)
