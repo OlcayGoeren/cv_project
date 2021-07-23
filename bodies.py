@@ -34,10 +34,6 @@ class BodyDataset(Dataset):
 
     def __getitem__(self, i):
         # read data
-        print(type(self.images_dir))
-        print(self.images_dir)
-        print(type(self.x_dataset[i]))
-        print(self.x_dataset[i])
         image = cv2.imread(os.path.join(
             self.images_dir, self.x_dataset[i]))
 
@@ -95,7 +91,6 @@ full_dataset = next(os.walk(
 
 ENCODER = 'mobilenet_v2'
 ENCODER_WEIGHTS = 'imagenet'
-ACTIVATION = 'sigmoid'
 DEVICE = 'cpu'
 
 
@@ -157,53 +152,56 @@ valid_epoch = smp.utils.train.ValidEpoch(
     verbose=True,
 )
 
-# if __name__ == "__main__":
-# max_score = 0
+if __name__ == "__main__":
+    # train model
+    # max_score = 0
+    # for i in range(0, 8):
+    #     print('\nEpoch: {}'.format(i))
+    # train_logs = train_epoch.run(train_loader)
+    # valid_logs = valid_epoch.run(valid_loader)
 
-# for i in range(0, 8):
-#     print('\nEpoch: {}'.format(i))
-# train_logs = train_epoch.run(train_loader)
-# valid_logs = valid_epoch.run(valid_loader)
+    # # do something (save model, change lr, etc.)
+    # if max_score < valid_logs['accuracy']:
+    #     max_score = valid_logs['accuracy']
+    #     torch.save(model, './second_best_model.pth')
+    #     print('Model saved!')
 
-# # do something (save model, change lr, etc.)
-# if max_score < valid_logs['iou_score']:
-#     max_score = valid_logs['iou_score']
-#     torch.save(model, './second_best_model.pth')
-#     print('Model saved!')
+    # validate model
+    test_dir_imgs = "./bodies/test/images"
+    test_dir_masks = "./bodies/test/mask"
+    full_testdataset = next(os.walk('./bodies/test/images'))[2]
+    test_dataset_withpre = BodyDataset(
+        test_dir_imgs, test_dir_masks, full_testdataset, preprocessing=get_preprocessing(preprocessing_fn))
+    test_dataset_withoutpre = BodyDataset(
+        test_dir_imgs, test_dir_masks, full_testdataset)
 
-# test_dir_imgs = "./bodies/test/images"
-# test_dir_masks = "./bodies/test/mask"
-# full_testdataset = next(os.walk('./bodies/test/images'))[2]
-# test_dataset_withpre = BodyDataset(
-#     test_dir_imgs, test_dir_masks, full_testdataset, preprocessing=get_preprocessing(preprocessing_fn))
-# test_dataset_withoutpre = BodyDataset(
-#     test_dir_imgs, test_dir_masks, full_testdataset)
+    best_model = torch.load('./best_model.pth')
 
-# best_model = torch.load('./best_model.pth')
-# test_loader = DataLoader(test_dataset_withpre, batch_size=1,
-#                          shuffle=False, num_workers=2)
-# test_epoch = smp.utils.train.ValidEpoch(
-#     model=best_model,
-#     loss=loss,
-#     metrics=metrics,
-#     device=DEVICE,
-# )
-# logs = test_epoch.run(test_loader)
+    test_loader = DataLoader(test_dataset_withpre, batch_size=1,
+                             shuffle=False, num_workers=2)
 
-# for i in range(5):
-#     n = np.random.choice(len(test_dataset_withpre))
-#     image_vis = test_dataset_withpre[n][0].astype('uint8')
-#     image, gt_mask = test_dataset_withpre[n]
+    test_epoch = smp.utils.train.ValidEpoch(
+        model=best_model,
+        loss=loss,
+        metrics=metrics,
+        device=DEVICE,
+    )
+    logs = test_epoch.run(test_loader)
 
-#     gt_mask = gt_mask.squeeze()
-#     x_tensor = torch.from_numpy(image).to(DEVICE).unsqueeze(0)
-#     pr_mask = best_model.predict(x_tensor)
-#     pr_mask = (pr_mask.squeeze().cpu().numpy().round())
+    for i in range(5):
+        n = np.random.choice(len(test_dataset_withpre))
+        image_vis = test_dataset_withpre[n][0].astype('uint8')
+        image, gt_mask = test_dataset_withpre[n]
 
-#     image, mask = test_dataset_withoutpre[n]
+        gt_mask = gt_mask.squeeze()
+        x_tensor = torch.from_numpy(image).to(DEVICE).unsqueeze(0)
+        pr_mask = best_model.predict(x_tensor)
+        pr_mask = (pr_mask.squeeze().cpu().numpy().round())
 
-#     visualize(
-#         image=image,
-#         ground_truth_mask=mask,
-#         predicted_mask=pr_mask
-#     )
+        image, mask = test_dataset_withoutpre[n]
+
+        visualize(
+            image=image,
+            ground_truth_mask=mask,
+            predicted_mask=pr_mask
+        )
